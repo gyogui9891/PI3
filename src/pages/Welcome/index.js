@@ -33,7 +33,7 @@ export default function Welcome() {
 
                 <Animatable.View animation='fadeInUp' style={styles.containerFooter}>
                     <Text style={{alignItems:'center',fontSize:11,paddingStart:'5%',fontWeight:'bold'}}>
-                        PI UNIVESP 2022 - Bruno, Fernando, Geraldo, Juliana, Luiz, Pedro
+                        PI UNIVESP 2022 - Bruno, Fernando, Geraldo, Juliana, Luiz, Pedro, Sonia
                     </Text>
 
                 </Animatable.View>
