@@ -1,0 +1,56 @@
+
+Video do YouTube: https://www.youtube.com/watch?v=4_zDCS2fVAU
+
+Comandos executados no vídeo para criar o ambiente dev:
+- Get-ExecutionPolicy
+- Set-ExecutionPolicy AllSigned: Caso o retorno do comando acima seja Restricted. Se for diferente pode pular.
+- Set-ExecutionPolicy Bypass -Scope Process -Force; 	[System.Net.ServicePointManager]::SecurityProtocol = 	[System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex 	((New-Object System.Net.WebClient).DownloadString	('https://chocolatey.org/install.ps1'))
+- choco
+- choco install -y nodejs-lts openjdk11
+- node -v
+- npm -v
+- java -version
+- npm install --global yarn
+- yarn -v
+- choco install yarn: Caso o comando acima tenha retornado falha
+- yarn global bin
+
+Links para download dos programas:
+Android Studio: https://developer.android.com/studio
+Visual Studio Code: https://code.visualstudio.com/
+
+Configurando Ambiente para Android studio
+Variáveis de ambiente: 
+- ANDROID_HOME
+- JAVA_HOME
+- %ANDROID_HOME%\emulator
+- %ANDROID_HOME%\tools
+- %ANDROID_HOME%\tools\bin
+- %ANDROID_HOME%\platform-tools
+- Caminho do yarn (caminho que retornou do yarn global bin)
+
+Comandos para criar projeto e rodar 
+- npx react-native init app 
+- npm install: casso tenha retornado algum erro durante a criação
+- npx react-native run-android
+
+------------------------
+
+Comando para criar projeto no EXPO:
+expo init app
+
+Comando para executar o projeto no EXPO:
+expo start
+
+
+------------------------
+
+Libraries usadas no código (dependências):
+
+React Navigation - Navegação de páginas - expo install @react-navigation/native
+
+React Stack - expo install @react-navigation/native-stack
+
+React Animatable - expo install react-native-animatable
+
+React Screens - npm install react-native-screens
