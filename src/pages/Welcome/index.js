@@ -1,11 +1,18 @@
 
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 
 import * as Animatable from 'react-native-animatable'
 
+import  { useNavigation } from '@react-navigation/native'
+
 export default function Welcome() {
+    const navigation = useNavigation();
+
+
     return (
+
+        
         <View style={styles.container}>
             <View style={styles.containerLogo}>
                 
@@ -18,22 +25,34 @@ export default function Welcome() {
             </View>
                 <Animatable.View animation="fadeInUp" style={styles.containerForm}>
                     <Text style={styles.title}> Painel de avisos e MarketPlace para o seu condomínio!</Text>
-                    <Text style={styles.text}>
-                        Login
-                    </Text>
-                    <Text style={styles.text}>
-                        Senha
-                    </Text>
-                    <TouchableOpacity style={styles.button}>
-                        <Text>
+                    <View style={styles.containerFormInput}>
+                    
+                        <Text style={styles.text}>Login </Text>
+                        <TextInput style={styles.inputText}
+                            placeholder="Digite o seu login"
+                        ></TextInput>
+                    
+                        <Text  style={styles.text} >Senha</Text>
+                        <TextInput secureTextEntry={true} style={styles.inputText}
+                            placeholder="Digite a sua senha"
+                        ></TextInput>
+                    
+                        <TouchableOpacity 
+                            style={styles.button}
+                            onPress = { () => navigation.navigate('Main')}
+                        >
+                        
+                        <Text style={styles.buttonText}>
                             Entrar
                         </Text>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
+                    </View>
+
                 </Animatable.View>
 
                 <Animatable.View animation='fadeInUp' style={styles.containerFooter}>
-                    <Text style={{alignItems:'center',fontSize:11,paddingStart:'5%',fontWeight:'bold'}}>
-                        PI UNIVESP 2022 - Bruno, Fernando, Geraldo, Juliana, Luiz, Pedro
+                    <Text style={{alignItems:'center',fontSize:10,paddingStart:'5%',fontWeight:'bold'}}>
+                        PI UNIVESP 2022 - Bruno, Fernando, Geraldo, Juliana, Luiz, Pedro, Sonia
                     </Text>
 
                 </Animatable.View>
@@ -67,6 +86,12 @@ const styles = StyleSheet.create({
         paddingEnd: '5%',
 
     },
+
+    containerFormInput:{
+
+
+    },
+
     containerFooter:{
         flex: 0.2,
         top:'1%',
@@ -77,13 +102,36 @@ const styles = StyleSheet.create({
         fontSize:24,
         fontWeight:'bold',
         marginTop:28,
-        marginBottom:12,
+        marginBottom:35,
         justifyContent:'center',
         alignItems:'center',
     },
-    text:{
-        
+    inputText:{
+        borderBottomWidth: 1,
+        height: 40,
+        marginBottom: 12,
+        fontSize: 16,
 
+    },
+
+    text:{
+        marginTop: 4,
+        fontSize: 16,
+        fontWeight:'bold',
+    },
+
+    button:{
+        marginTop:35,
+        alignItems:'center',
+        fontSize:25,
+        backgroundColor:'#fff',
+        width:'100%',
+        borderRadius:6,
+        paddingVertical:8,
+    },
+    buttonText:{
+        fontSize:20,
+        fontWeight:'bold',
     },
 
 })
