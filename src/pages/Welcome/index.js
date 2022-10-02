@@ -51,6 +51,7 @@ export default function Welcome() {
                 </Animatable.View>
 
                 <Animatable.View animation='fadeInUp' style={styles.containerFooter}>
+                
                     <Text style={{alignItems:'center',fontSize:10,paddingStart:'5%',fontWeight:'bold'}}>
                         PI UNIVESP 2022 - Bruno, Fernando, Geraldo, Juliana, Luiz, Pedro, Sonia
                     </Text>
