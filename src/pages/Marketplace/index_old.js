@@ -1,136 +1,87 @@
 
 import React, {useState, useEffect} from "react";
-import {View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity, TextInput, Modal, Keyboard, ImageEditor } from 'react-native';
-// import { doc, setDoc } from "firebase/firestore";
-import {firebase} from "../../Config/firebase.js";
-import { useNavigation } from '@react-navigation/native'
+import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Image, FlatList } from 'react-native';
+import * as ImagePicker from 'expo-image-picker'
 
-//Cria o objeto do separador de linhas:
 itemSeparator = () => {
     return <View style={styles.separator} />
 }
 
-const MarketPlace = () => {
+export default function Main() {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
+    const [image, setImage] = useState([]);
 
-        const [produto, setProduto] = useState([]);
-        const produtosRef = firebase.firestore().collection('Produtos');
-        const [addProdutos, setAddProdutos] = useState('');
-        const [addValor, setAddValor] = useState('');
-        const [addDescricao, setAddDescricao] = useState('');
-        const [modalVisible, setModalVisible] = useState(false);
-
-        const [time, setTime] = useState(null);
-
-    //     useEffect(() => {
-          
-    //         let time = newTimeStamp()
-    //         setTime(time);
-    //     }, []);
-
-    // const newTimeStamp = () => { 
-    //         let today = new Date();
-    //         let hours = (today.getHours() < 10 ? '0' : '') + today.getHours();
-    //         let minutes = (today.getMinutes() < 10 ? '0' : '') + today.getMinutes();
-    //         let seconds = (today.getSeconds() < 10 ? '0' : '') + today.getSeconds();
-    //         return hours + ':' + minutes + ':' + seconds;
-    //         Alert.alert('passei');
-    // }
-
-    useEffect(() => {
-
-        produtosRef
-        .orderBy('createdAt', 'desc')
-        .onSnapshot(
-            querySnapshot => {
-                const produto = []
-                querySnapshot.forEach((docMP) => {
-                    const {nomeproduto} = docMP.data()
-                    const {valor} = docMP.data()
-                    const {descricao} = docMP.data()
-                    produto.push({
-                        id: docMP.id,
-                        nomeproduto: nomeproduto,
-                        valor: valor,
-                        descricao: descricao
-                    })
-                })
-                setProduto(produto)
-            }
-        )
-
-    }, [])
-//USEEFFECT OK
+    const [produtoAll, setProduto] = useState([]);
+    
+    const [produtoNovo, setProdutonaTela] = useState('');
+    const [valorNovo, setValornaTela] = useState('')
+    const [descricaoNovo, setDescricaonaTela] = useState('')
 
 
-// //deletar um aviso
-//     const deleteAvisos = (produto) => {
-//         produtosRef
-//             .doc(aviso.id)
-//             .delete()
-//             .then(() => {
-//                alert('Removido com sucesso')
-//             })
-//             .catch(error => {
-//                 alert(error);
-//             })
+    let key = produtoAll.length
+
+    function addtoList (){
+        produtoAll.push({id: ++key, conteudo: produtoNovo, valor: valorNovo, descricao:descricaoNovo});
+        setProduto([...produtoAll]);
+        setModalVisible(!modalVisible);
+    }
+
+    // useEffect(() => {
+    //     (async () => {
+    //         const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    //         setHasGalleryPermission(galleryStatus.status === 'granted');
+    //     })();
+    // }, []);
+
+    // const pickImage = async () => {
+    //     let result = await ImagePicker.launchImageLibraryAsync({
+    //         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //         allowsEditing: true,
+    //         aspect: [4,4],
+    //         quality:1
+    // })
+
+//     if (!result.cancelled){
+//         setImage(result.uri);
 
 //     }
+//     console.log(result)
+// };
+//     if (hasGalleryPermission == false){
+//         return alert('Sem permissão para acesso ao rolo de camera. Revise as configurações de permissão para o app.')
+//     }
 
-//DELETAR AVISO OK
 
-//adicionar um aviso
-    const addProduto = () => {
-        //checar se há um aviso
-        if (addProdutos && addProdutos.length > 0){
-            //pega o horario
-            const timestamp = firebase.firestore.FieldValue.serverTimestamp();  
-            const data = {
-                createdAt: timestamp,
-                nomeproduto: addProdutos,
-                valor: addValor,
-                descricao:addDescricao
-            };
-            produtosRef
-                .add(data)
-                .then(() => {
-                    setAddProdutos('');
-                    //liberar teclado
-                    Keyboard.dismiss();
-                })
-                .catch((error) => {
-                    alert(error);
-                })
-            
-        }
-        setModalVisible(!modalVisible)
-    }
- 
+    console.log(image)
     return (
-        
-        <View style={styles.container}>
+
+        <SafeAreaView style={styles.container}>
             <View style={styles.containerTitle}>
                 <Text style={styles.titleHome}>MarketPlace</Text>
             </View>
             <View style={styles.containerBody}>
-            <FlatList
-                    style={styles.flatListContainer}
-                    data={produto}
-                    numColumns={1}
-                    renderItem={( {item} ) => (
-                        //DELETE ITEM 21:00 DO VIDEO
-                        <View>
-                            <Text style={styles.item}>
-                            {"\n\n"}
-                                Produto: {item.nomeproduto} {"\n\n"}
-                                Valor: {item.valor} {"\n\n"}
-                                Descrição: {item.descricao}{"\n\n"}
-                            </Text>
-                        </View>
+                {/* //Aqui vai aparecer os itens */}
+
+                <FlatList style={styles.flatListContainer}
+                    data={produtoAll}
+                    renderItem={({ item }) => (
+                        <Text style={styles.item}>
+                            <View style={{flexDirection:'row',justifyContent:'center', alignItems:'center', alignContent:'center'}}></View>{"\n\n"}
+                            Produto: {item.conteudo} {"\n\n"}
+                            Valor: {item.valor} {"\n\n"}
+                            Descrição: {item.descricao}{"\n\n"}
+                        </Text>
                     )}
-                    ItemSeparatorComponent = {itemSeparator}
-            />
+                    //separador
+                    ItemSeparatorComponent={itemSeparator}
+                    />
+                    
+                      
+                        
+
             <TouchableOpacity style={styles.buttonAdd} onPress={() => {setModalVisible(true)}}>
-                    <Text style={styles.buttonAddText}>+</Text>
+                <Text style={styles.buttonAddText}>+</Text>
             </TouchableOpacity>
             <Modal
                 transparent = {true}
@@ -144,28 +95,28 @@ const MarketPlace = () => {
                                     placeholder="Escreva o nome do produto/serviço aqui" 
                                     multiline={false}
                                     style={styles.textInputModal}
-                                    onChangeText={(nomeproduto) => setAddProdutos(nomeproduto)}
+                                    onChangeText={(value) => setProdutonaTela(value)}
                                     />
                                 <Text>Valor:</Text>
                                 <TextInput 
                                     placeholder="Escreva o valor aqui" 
                                     multiline={false}
                                     style={styles.textInputModal}
-                                    onChangeText={(valor) => setAddValor(valor)}
+                                    onChangeText={(value) => setValornaTela(value)}
                                     />
                                 <Text>Descrição:</Text>
                                 <TextInput
                                     placeholder="Escreva a descrição aqui" 
                                     multiline={true}
                                     style={styles.textInputProductDescriptionModal}
-                                    onChangeText={(descricao) => setAddDescricao(descricao)}
+                                    onChangeText={(value) => setDescricaonaTela(value)}
                                     />
                                 {/* <TouchableOpacity style={styles.buttonPickImage} onPress={() => ()}>
                                 <Text>Insira aqui a foto do produto</Text>
                                 </TouchableOpacity> */}
                                 {/* {image && <Image source={{uri: image}} style={{flex:15, height:250,width:250}}/>} */}
                                 <View style={styles.containerButtonRow}>
-                                <TouchableOpacity style={styles.buttonModal} onPress={addProduto}>
+                                <TouchableOpacity style={styles.buttonModal} onPress={() => addtoList()}>
                                     <Text style={{fontSize:20}}>Salvar</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.buttonModal} onPress={() => setModalVisible(!modalVisible)}>
@@ -175,12 +126,13 @@ const MarketPlace = () => {
                             </View>
                         </SafeAreaView>
                 </Modal>
-
             </View>
-        </View>
+
+        </SafeAreaView>
 
     );
-}
+}                 
+                
 const styles = StyleSheet.create({
     
     container:{
@@ -338,5 +290,3 @@ const styles = StyleSheet.create({
         width:'100%',
     }
 })
-
-export default MarketPlace;
