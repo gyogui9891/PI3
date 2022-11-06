@@ -7,7 +7,7 @@ export default function Main() {
 
         <View style={styles.container}>
             <View style={styles.containerTitle}>
-                <Text style={styles.titleHome}>Bem-vindo(a) ao Notifício!</Text>
+                <Text style={styles.titleHome}>Bem-vindo(a) ao CondoInfo!</Text>
             </View>
             <View style={styles.containerBody}>
                 <Text style={styles.textBody}>Aqui você encontrará todas as novidades sobre o seu 

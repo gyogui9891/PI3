@@ -1,129 +1,93 @@
 
 import React, {useState, useEffect} from "react";
-import {View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity, TextInput, Modal, Keyboard, ImageEditor } from 'react-native';
+import {View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity, TextInput, Modal, Keyboard } from 'react-native';
 // import { doc, setDoc } from "firebase/firestore";
-import {firebase} from "../../Config/firebase.js";
-import { useNavigation } from '@react-navigation/native'
+
+import Firebase from "../../Config/firebase.js"
+
+import {getFirestore, collection, doc, setDoc, Firestore } from "firebase/firestore";
 
 //Cria o objeto do separador de linhas:
 itemSeparator = () => {
     return <View style={styles.separator} />
 }
 
-const Panel = () => {
+const General = () => {
+    const todoRef = Firebase.firestore().collection('Avisos');
+    const [addData, setAddData] = useState('');
+}
 
-        const [aviso, setAviso] = useState([]);
-        const avisosRef = firebase.firestore().collection('Avisos');
-        const [addData, setAddData] = useState('');
-        const [modalVisible, setModalVisible] = useState(false);
-
-        const [time, setTime] = useState(null);
-
-        useEffect(() => {
-          
-            let time = newTimeStamp()
-            setTime(time);
-        }, []);
-
-    const newTimeStamp = () => { 
-            let today = new Date();
-            let hours = (today.getHours() < 10 ? '0' : '') + today.getHours();
-            let minutes = (today.getMinutes() < 10 ? '0' : '') + today.getMinutes();
-            let seconds = (today.getSeconds() < 10 ? '0' : '') + today.getSeconds();
-            return hours + ':' + minutes + ':' + seconds;
-            Alert.alert('passei');
-    }
-
-    useEffect(() => {
-
-        avisosRef
-        .orderBy('createdAt', 'desc')
-        .onSnapshot(
-            querySnapshot => {
-                const aviso = []
-                querySnapshot.forEach((doc) => {
-                    const {conteudo} = doc.data()
-                    aviso.push({
-                        id: doc.id,
-                        conteudo: conteudo,
-                        inseridoem: newTimeStamp()
-                    })
-                })
-                setAviso(aviso)
-            }
-        )
-
-    }, [])
-//USEEFFECT OK
-
-
-//deletar um aviso
-    const deleteAvisos = (aviso) => {
-        avisosRef
-            .doc(aviso.id)
-            .delete()
+const addField = () => {
+    if (addData && addData.lenght > 0){
+        const timestamp = Firebase.firestore.FieldValue.serverTimestamp();
+        const data = {
+            aviso: addData,
+            createdAt: timestamp
+        };
+        todoRef
+            .add(data)
             .then(() => {
-               alert('Removido com sucesso')
+                setAddData('')
+                Keyboard.dismiss();
             })
-            .catch(error => {
-                alert(error);
+            .catch((error) => {
+                alert(error)
             })
-
     }
+}
 
-//DELETAR AVISO OK
+export default function Panel() {
 
-//adicionar um aviso
-    const addAviso = () => {
-        //checar se há um aviso
-        if (addData && addData.length > 0){
-            //pega o horario
-            const timestamp = firebase.firestore.FieldValue.serverTimestamp();  
-            const data = {
-                createdAt: timestamp,
-                conteudo: addData,
-            };
-            avisosRef
-                .add(data)
-                .then(() => {
-                    setAddData('');
-                    //liberar teclado
-                    Keyboard.dismiss();
-                })
-                .catch((error) => {
-                    alert(error);
-                })
-            
-        }
-        setModalVisible(!modalVisible)
-    }
+    // Cria o array que vai armazenar os novos avisos:
+    const [aviso, avisolist] = useState ([]);
+
+    // cria o estado para a variavel pra ser usada no TextInput para guardar o valor para ser mostrado na tela
+    const [avisonovo, setAviso] = useState('');
+    
+    // cria o bool que vai fazer o switch de estado para o modal
+    const [modalVisible, setModalVisible] = useState(false);
+    
+    // cria a variável que vai guardar o tamanho do array
+    let key = aviso.length
+
+    // cria o timestamp formatado para aparecer a cada novo aviso
+    let timestamp = new Date();
+    let date = timestamp.getDate() + '/' + (timestamp.getMonth() + 1) + '/' + timestamp.getFullYear();
+    let time = timestamp.getHours() + ':' + timestamp.getMinutes() + ':' + timestamp.getSeconds();
+    let fullDateTime = date + ' ' + time
+
  
+
+    // funcao acionada pelo botao Salvar do modal e que mostra o item adicionado na tela
+    function addtoList(){
+        aviso.push({id: ++key, conteudo:fullDateTime + ' \n\n ' + avisonovo});
+        avisolist([...aviso]);
+        setModalVisible(!modalVisible);
+    }
+
     return (
-        
-        <View style={styles.container}>
+        // cria a estrutura de components
+        <SafeAreaView style={styles.container}>
             <View style={styles.containerTitle}>
                 <Text style={styles.titleHome}>Painel de Avisos</Text>
             </View>
             <View style={styles.containerBody}>
-            <FlatList
-                    style={styles.flatListContainer}
+                {/* //cria o flatlist que vai receber os items que sao inseridos no modal pela funcion addtoList */}
+                <FlatList style={styles.flatListContainer}
                     data={aviso}
-                    numColumns={1}
-                    renderItem={( {item} ) => (
-                        //DELETE ITEM 21:00 DO VIDEO
-                        <View>
-                            <Text style={styles.item}>
-                            {"\n\n"}
-                                {item.conteudo[0].toUpperCase() + item.conteudo.slice(1)}
-                            </Text>
-                        </View>
+                    renderItem={({ item }) => (
+                        <Text style={styles.item}>{item.conteudo}</Text>
+                    
                     )}
-                    ItemSeparatorComponent = {itemSeparator}
-            />
-            <TouchableOpacity style={styles.buttonAdd} onPress={() => {setModalVisible(true)}}>
+                    //separador
+                    ItemSeparatorComponent={itemSeparator}
+                />
+                <TouchableOpacity style={styles.buttonAdd} onPress={() => {setModalVisible(true)}}>
                     <Text style={styles.buttonAddText}>+</Text>
-            </TouchableOpacity>
-            <Modal
+                </TouchableOpacity>
+
+                        {/* //cria o modal que popa na tela quando clica no botão + */}
+                <Modal
                 transparent = {true}
                 animationType = "slide" visible={modalVisible}
                 >
@@ -134,11 +98,11 @@ const Panel = () => {
                                     placeholder="Escreva o texto aqui" 
                                     multiline={true}
                                     style={styles.textInputModal}
-                                    onChangeText={(conteudo) => setAddData(conteudo)}
+                                    onChangeText={(aviso) => setAddData(aviso)}
                                     value={addData}
                                     />
                                 <View style={styles.containerButtonRow}>
-                                <TouchableOpacity style={styles.buttonModal} onPress={addAviso}>
+                                <TouchableOpacity style={styles.buttonModal} onPress={addField}>
                                     <Text style={{fontSize:20}}>Salvar</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.buttonModal} onPress={ () => setModalVisible(!modalVisible)}>
@@ -147,11 +111,10 @@ const Panel = () => {
                                 </View>
                             </View>
                         </SafeAreaView>
-                </Modal>  
-
+                </Modal>
+            
             </View>
-        </View>
-
+        </SafeAreaView>
     );
 }
 const styles = StyleSheet.create({
@@ -276,5 +239,3 @@ const styles = StyleSheet.create({
         width:'100%',
     }
 })
-
-export default Panel;
