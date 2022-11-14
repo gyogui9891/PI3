@@ -1,43 +1,13 @@
-
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 
 import * as Animatable from 'react-native-animatable'
 
 import  { useNavigation } from '@react-navigation/native'
 
-import { firebase } from "../../Config/firebase.js";
-
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-
 export default function Welcome() {
     const navigation = useNavigation();
 
-     const [email, setEmail] = useState('')
-     const [password, setPassword] = useState('')
-
-     const auth = firebase.auth()
-
-     useEffect(() => {
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                navigation.navigate("Main")
-                console.log(user.email)
-            }
-        })
-
-        //  return unsubscribe
-    }, [])
-
-    const handleSignIn = () => {
-        auth
-            .signInWithEmailAndPassword(email, password)
-            .then(userCredentials => {
-                const user = userCredentials.user;
-                // console.log(user.email);
-            })
-            .catch(error => alert("E-mail de usuário e/ou senha inválidos."))
-    }
 
     return (
 
@@ -57,22 +27,20 @@ export default function Welcome() {
                     <View style={styles.containerFormInput}>
                     
                         <Text style={styles.text}>Login </Text>
-                        <TextInput 
-                            style={styles.inputText}
-                            value={email}
-                            onChangeText = {text => setEmail(text)}
-                            placeholder="Digite o seu e-mail de login"
-                            ></TextInput>
+                        <TextInput style={styles.inputText}
+                            placeholder="Digite o seu login"
+                        ></TextInput>
                     
                         <Text  style={styles.text} >Senha</Text>
                         <TextInput secureTextEntry={true} style={styles.inputText}
-                            value={password}
                             placeholder="Digite a sua senha"
-                            onChangeText={text => setPassword(text)}
                         ></TextInput>
+                    
                         <TouchableOpacity 
                             style={styles.button}
-                            onPress={ () => handleSignIn()}>
+                            onPress = { () => navigation.navigate('Main')}
+                        >
+                        
                         <Text style={styles.buttonText}>
                             Entrar
                         </Text>
@@ -120,6 +88,8 @@ const styles = StyleSheet.create({
     },
 
     containerFormInput:{
+
+
     },
 
     containerFooter:{
